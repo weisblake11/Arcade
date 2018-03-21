@@ -1,0 +1,247 @@
+cs1302-arcade:
+total 68
+-rw-r--r--. 1 ugrad  1703 Dec 11 22:44 ATTRIBUTION.md
+-rw-r--r--. 1 ugrad 19121 Nov 17 16:13 LICENSE
+-rw-r--r--. 1 ugrad   207 Nov 17 16:13 Makefile
+-rw-r--r--. 1 ugrad  1942 Nov 17 16:13 pom.xml
+-rw-r--r--. 1 ugrad 18823 Nov 17 16:13 README.md
+-rw-r--r--. 1 ugrad     0 Dec 12 00:37 rec6161
+-rw-r--r--. 1 ugrad  6420 Dec 12 00:35 REFLECTION.md
+drwxr-xr-x. 3 ugrad  4096 Nov 17 16:13 src
+drwxr-xr-x. 5 ugrad  4096 Nov 17 16:14 target
+
+cs1302-arcade/src:
+total 4
+drwxr-xr-x. 4 ugrad 4096 Nov 28 14:48 main
+
+cs1302-arcade/src/main:
+total 8
+drwxr-xr-x. 3 ugrad 4096 Nov 17 16:13 java
+drwxr-xr-x. 4 ugrad 4096 Dec 11 22:18 resources
+
+cs1302-arcade/src/main/java:
+total 4
+drwxr-xr-x. 3 ugrad 4096 Nov 17 16:13 cs1302
+
+cs1302-arcade/src/main/java/cs1302:
+total 4
+drwxr-xr-x. 3 ugrad 4096 Dec 12 00:35 arcade
+
+cs1302-arcade/src/main/java/cs1302/arcade:
+total 60
+-rw-r--r--. 1 ugrad  1279 Nov 29 01:20 ArcadeApp.java
+-rw-r--r--. 1 ugrad  3864 Dec 10 02:06 Home.java
+-rw-r--r--. 1 ugrad 13569 Dec 12 00:35 Minesweeper.java
+-rw-r--r--. 1 ugrad  3221 Nov 29 01:20 Minesweeper.java~
+-rw-r--r--. 1 ugrad 27400 Dec 11 23:01 Tetris.java
+drwxr-xr-x. 2 ugrad  4096 Dec 11 18:34 tiles
+
+cs1302-arcade/src/main/java/cs1302/arcade/tiles:
+total 44
+-rw-r--r--. 1 ugrad 2454 Dec 11 18:06 BlueTile.java
+-rw-r--r--. 1 ugrad 2462 Dec 11 18:06 GreenTile.java
+-rw-r--r--. 1 ugrad 2147 Dec 11 18:18 NextTileStack.java
+-rw-r--r--. 1 ugrad 3094 Dec 11 18:06 OrangeTile.java
+-rw-r--r--. 1 ugrad 3076 Dec 11 18:08 PinkTile.java
+-rw-r--r--. 1 ugrad 2010 Dec 11 18:10 RedTile.java
+-rw-r--r--. 1 ugrad 3095 Dec 11 18:13 RoyalTile.java
+-rw-r--r--. 1 ugrad 1874 Dec 11 18:26 Square.java
+-rw-r--r--. 1 ugrad  591 Dec 11 18:27 Tile.java
+-rw-r--r--. 1 ugrad 2234 Dec 11 18:34 TileSquare.java
+-rw-r--r--. 1 ugrad 1811 Dec 11 18:14 YellowTile.java
+
+cs1302-arcade/src/main/resources:
+total 10004
+-rw-r--r--. 1 ugrad   51636 Nov 28 14:48 ArcadeTitle.png
+-rwxr-xr-x. 1 ugrad   34360 Dec  5 14:50 DigitalText.ttf
+-rw-r--r--. 1 ugrad 2251757 Nov 29 01:20 FixedSpace.gif
+-rw-r--r--. 1 ugrad   51657 Dec 11 16:32 GAMEOVER.png
+-rw-r--r--. 1 ugrad   38536 Dec 11 22:18 HELP.png
+drwxr-xr-x. 2 ugrad    4096 Dec 10 21:06 Minesweeper
+-rw-r--r--. 1 ugrad   69469 Nov 28 14:48 Minesweeper Board.png
+-rw-r--r--. 1 ugrad   45082 Nov 28 14:48 Minesweeper Icon.png
+-rw-r--r--. 1 ugrad   81936 Nov 29 01:20 MinesweeperIcon.png
+-rw-r--r--. 1 ugrad 2671664 Nov 28 14:48 MovingBackground.gif
+-rw-r--r--. 1 ugrad   30319 Dec  5 12:16 mTest.png
+-rw-r--r--. 1 ugrad 1961196 Nov 29 01:20 NewSpaceBackground.gif
+-rw-r--r--. 1 ugrad 2422098 Nov 29 01:20 NoTitleIntro.gif
+-rw-r--r--. 1 ugrad    1583 Nov 28 14:48 Opened.png
+drwxr-xr-x. 2 ugrad    4096 Dec  8 13:55 TetrisBlocks
+-rw-r--r--. 1 ugrad   85439 Nov 28 14:48 Tetris Icon.png
+-rw-r--r--. 1 ugrad  278375 Nov 29 01:20 TetrisIcon.png
+-rw-r--r--. 1 ugrad  129294 Nov 28 14:48 Unopened.png
+
+cs1302-arcade/src/main/resources/Minesweeper:
+total 96
+-rw-r--r--. 1 ugrad   883 Dec 10 21:06 1.png
+-rw-r--r--. 1 ugrad   993 Dec 10 21:06 2.png
+-rw-r--r--. 1 ugrad  1246 Dec 10 21:06 3.png
+-rw-r--r--. 1 ugrad   877 Dec 10 21:06 4.png
+-rw-r--r--. 1 ugrad  1390 Dec 10 21:06 5.png
+-rw-r--r--. 1 ugrad   930 Dec 10 21:06 6.png
+-rw-r--r--. 1 ugrad  1354 Dec 10 21:06 7.png
+-rw-r--r--. 1 ugrad   470 Dec 10 21:06 8.png
+-rw-r--r--. 1 ugrad  1173 Dec 10 21:06 Flag.png
+-rw-r--r--. 1 ugrad  6762 Dec 10 21:06 Mine.png
+-rw-r--r--. 1 ugrad   309 Dec 10 21:06 Opened.png
+-rw-r--r--. 1 ugrad  1224 Dec 10 21:06 ?.png
+-rw-r--r--. 1 ugrad   953 Dec 10 21:06 RedMine.png
+-rw-r--r--. 1 ugrad  8607 Dec 10 21:06 SadFace.png
+-rw-r--r--. 1 ugrad 10369 Dec 10 21:06 Smiley.png
+-rw-r--r--. 1 ugrad  1155 Dec 10 21:06 Unopened.png
+-rw-r--r--. 1 ugrad 11210 Dec 10 21:06 WinFace.png
+
+cs1302-arcade/src/main/resources/TetrisBlocks:
+total 140
+-rw-r--r--. 1 ugrad  4330 Dec  5 11:21 BlackBlock.png
+-rw-r--r--. 1 ugrad 13960 Dec  5 11:21 BlueBlock.png
+-rw-r--r--. 1 ugrad 13561 Dec  5 11:21 GreenBlock.png
+-rw-r--r--. 1 ugrad  9799 Dec  5 11:21 GreyBlock.png
+-rw-r--r--. 1 ugrad 14229 Dec  5 11:21 OrangeBlock.png
+-rw-r--r--. 1 ugrad 13125 Dec  5 11:21 PinkBlock.png
+-rw-r--r--. 1 ugrad 13714 Dec  5 11:21 RedBlock.png
+-rw-r--r--. 1 ugrad 23760 Dec  8 13:55 RoyalBlock.png
+-rw-r--r--. 1 ugrad 13354 Dec  5 11:21 YellowBlock.png
+
+cs1302-arcade/target:
+total 12
+drwxr-xr-x. 6 ugrad 4096 Dec 11 22:25 classes
+drwxr-xr-x. 3 ugrad 4096 Nov 17 16:14 generated-sources
+drwxr-xr-x. 3 ugrad 4096 Nov 17 16:14 maven-status
+
+cs1302-arcade/target/classes:
+total 11164
+-rw-r--r--. 1 ugrad   51636 Nov 28 14:53 ArcadeTitle.png
+drwxr-xr-x. 3 ugrad    4096 Nov 17 16:14 cs1302
+-rw-r--r--. 1 ugrad   34360 Dec  5 14:51 DigitalText.ttf
+-rw-r--r--. 1 ugrad  102797 Nov 28 14:53 Eight.png
+-rw-r--r--. 1 ugrad   87040 Nov 28 14:53 Five.png
+-rw-r--r--. 1 ugrad 2251757 Nov 29 01:20 FixedSpace.gif
+-rw-r--r--. 1 ugrad   91920 Nov 28 14:53 Flag.png
+-rw-r--r--. 1 ugrad   95675 Nov 28 14:53 Four.png
+-rw-r--r--. 1 ugrad   51657 Dec 11 16:53 GAMEOVER.png
+-rw-r--r--. 1 ugrad    1361 Nov 28 14:53 Guess.png
+-rw-r--r--. 1 ugrad   38536 Dec 11 22:25 HELP.png
+-rw-r--r--. 1 ugrad  255439 Nov 28 14:53 Intro.png
+drwxr-xr-x. 2 ugrad    4096 Dec 10 21:06 Minesweeper
+-rw-r--r--. 1 ugrad   69469 Nov 28 14:53 Minesweeper Board.png
+-rw-r--r--. 1 ugrad   45082 Nov 28 14:53 Minesweeper Icon.png
+-rw-r--r--. 1 ugrad   81936 Nov 29 01:20 MinesweeperIcon.png
+drwxr-xr-x. 2 ugrad    4096 Dec  5 12:20 MinesweeperImagesResized
+-rw-r--r--. 1 ugrad 2671664 Nov 28 14:53 MovingBackground.gif
+-rw-r--r--. 1 ugrad   30319 Dec  5 12:20 mTest.png
+-rw-r--r--. 1 ugrad 1961196 Nov 29 01:20 NewSpaceBackground.gif
+-rw-r--r--. 1 ugrad 2422098 Nov 29 01:20 NoTitleIntro.gif
+-rw-r--r--. 1 ugrad  151345 Nov 28 14:53 NoTitleIntro.png
+-rw-r--r--. 1 ugrad    1117 Nov 28 14:53 One.png
+-rw-r--r--. 1 ugrad    1583 Nov 28 14:53 Opened.png
+-rw-r--r--. 1 ugrad  110406 Nov 28 14:53 Seven.png
+-rw-r--r--. 1 ugrad  105397 Nov 28 14:53 Six.png
+-rw-r--r--. 1 ugrad    5699 Nov 28 14:53 Smiley.png
+drwxr-xr-x. 2 ugrad    4096 Dec  8 13:56 TetrisBlocks
+-rw-r--r--. 1 ugrad   85439 Nov 28 14:53 Tetris Icon.png
+-rw-r--r--. 1 ugrad  278375 Nov 29 01:20 TetrisIcon.png
+-rw-r--r--. 1 ugrad   31068 Nov 28 14:53 Three.png
+-rw-r--r--. 1 ugrad  112892 Nov 28 14:53 Two.png
+-rw-r--r--. 1 ugrad  129294 Nov 28 14:53 Unopened.png
+
+cs1302-arcade/target/classes/cs1302:
+total 4
+drwxr-xr-x. 3 ugrad 4096 Dec 12 00:36 arcade
+
+cs1302-arcade/target/classes/cs1302/arcade:
+total 60
+-rw-r--r--. 1 ugrad  1609 Dec 12 00:36 ArcadeApp.class
+-rw-r--r--. 1 ugrad  7052 Dec 12 00:36 Home.class
+-rw-r--r--. 1 ugrad  2585 Dec 12 00:36 Minesweeper$1.class
+-rw-r--r--. 1 ugrad 10684 Dec 12 00:36 Minesweeper.class
+-rw-r--r--. 1 ugrad  1346 Dec 12 00:36 Tetris$1.class
+-rw-r--r--. 1 ugrad   756 Dec 12 00:36 Tetris$2.class
+-rw-r--r--. 1 ugrad 18618 Dec 12 00:36 Tetris.class
+drwxr-xr-x. 2 ugrad  4096 Dec 12 00:36 tiles
+
+cs1302-arcade/target/classes/cs1302/arcade/tiles:
+total 44
+-rw-r--r--. 1 ugrad 1629 Dec 12 00:36 BlueTile.class
+-rw-r--r--. 1 ugrad 1633 Dec 12 00:36 GreenTile.class
+-rw-r--r--. 1 ugrad 1788 Dec 12 00:36 NextTileStack.class
+-rw-r--r--. 1 ugrad 1929 Dec 12 00:36 OrangeTile.class
+-rw-r--r--. 1 ugrad 1921 Dec 12 00:36 PinkTile.class
+-rw-r--r--. 1 ugrad 1625 Dec 12 00:36 RedTile.class
+-rw-r--r--. 1 ugrad 1925 Dec 12 00:36 RoyalTile.class
+-rw-r--r--. 1 ugrad 1362 Dec 12 00:36 Square.class
+-rw-r--r--. 1 ugrad  503 Dec 12 00:36 Tile.class
+-rw-r--r--. 1 ugrad 1473 Dec 12 00:36 TileSquare.class
+-rw-r--r--. 1 ugrad 1206 Dec 12 00:36 YellowTile.class
+
+cs1302-arcade/target/classes/Minesweeper:
+total 96
+-rw-r--r--. 1 ugrad   883 Dec 10 21:06 1.png
+-rw-r--r--. 1 ugrad   993 Dec 10 21:06 2.png
+-rw-r--r--. 1 ugrad  1246 Dec 10 21:06 3.png
+-rw-r--r--. 1 ugrad   877 Dec 10 21:06 4.png
+-rw-r--r--. 1 ugrad  1390 Dec 10 21:06 5.png
+-rw-r--r--. 1 ugrad   930 Dec 10 21:06 6.png
+-rw-r--r--. 1 ugrad  1354 Dec 10 21:06 7.png
+-rw-r--r--. 1 ugrad   470 Dec 10 21:06 8.png
+-rw-r--r--. 1 ugrad  1173 Dec 10 21:06 Flag.png
+-rw-r--r--. 1 ugrad  6762 Dec 10 21:06 Mine.png
+-rw-r--r--. 1 ugrad   309 Dec 10 21:06 Opened.png
+-rw-r--r--. 1 ugrad  1224 Dec 10 21:06 ?.png
+-rw-r--r--. 1 ugrad   953 Dec 10 21:06 RedMine.png
+-rw-r--r--. 1 ugrad  8607 Dec 10 21:06 SadFace.png
+-rw-r--r--. 1 ugrad 10369 Dec 10 21:06 Smiley.png
+-rw-r--r--. 1 ugrad  1155 Dec 10 21:06 Unopened.png
+-rw-r--r--. 1 ugrad 11210 Dec 10 21:06 WinFace.png
+
+cs1302-arcade/target/classes/MinesweeperImagesResized:
+total 48
+-rw-r--r--. 1 ugrad  883 Dec  5 12:20 1.png
+-rw-r--r--. 1 ugrad  993 Dec  5 12:20 2.png
+-rw-r--r--. 1 ugrad 1246 Dec  5 12:20 3.png
+-rw-r--r--. 1 ugrad  877 Dec  5 12:20 4.png
+-rw-r--r--. 1 ugrad 1390 Dec  5 12:20 5.png
+-rw-r--r--. 1 ugrad  930 Dec  5 12:20 6.png
+-rw-r--r--. 1 ugrad 1354 Dec  5 12:20 7.png
+-rw-r--r--. 1 ugrad  470 Dec  5 12:20 8.png
+-rw-r--r--. 1 ugrad 1173 Dec  5 12:20 Flag.png
+-rw-r--r--. 1 ugrad  309 Dec  5 12:20 Opened.png
+-rw-r--r--. 1 ugrad 1224 Dec  5 12:20 ?.png
+-rw-r--r--. 1 ugrad 1155 Dec  5 12:20 Unopened.png
+
+cs1302-arcade/target/classes/TetrisBlocks:
+total 140
+-rw-r--r--. 1 ugrad  4330 Dec  5 12:20 BlackBlock.png
+-rw-r--r--. 1 ugrad 13960 Dec  5 12:20 BlueBlock.png
+-rw-r--r--. 1 ugrad 13561 Dec  5 12:20 GreenBlock.png
+-rw-r--r--. 1 ugrad  9799 Dec  5 12:20 GreyBlock.png
+-rw-r--r--. 1 ugrad 14229 Dec  5 12:20 OrangeBlock.png
+-rw-r--r--. 1 ugrad 13125 Dec  5 12:20 PinkBlock.png
+-rw-r--r--. 1 ugrad 13714 Dec  5 12:20 RedBlock.png
+-rw-r--r--. 1 ugrad 23760 Dec  8 13:56 RoyalBlock.png
+-rw-r--r--. 1 ugrad 13354 Dec  5 12:20 YellowBlock.png
+
+cs1302-arcade/target/generated-sources:
+total 4
+drwxr-xr-x. 2 ugrad 4096 Nov 17 16:14 annotations
+
+cs1302-arcade/target/generated-sources/annotations:
+total 0
+
+cs1302-arcade/target/maven-status:
+total 4
+drwxr-xr-x. 3 ugrad 4096 Nov 17 16:14 maven-compiler-plugin
+
+cs1302-arcade/target/maven-status/maven-compiler-plugin:
+total 4
+drwxr-xr-x. 3 ugrad 4096 Nov 17 16:14 compile
+
+cs1302-arcade/target/maven-status/maven-compiler-plugin/compile:
+total 4
+drwxr-xr-x. 2 ugrad 4096 Nov 17 16:14 default-compile
+
+cs1302-arcade/target/maven-status/maven-compiler-plugin/compile/default-compile:
+total 8
+-rw-r--r--. 1 ugrad  597 Dec 12 00:36 createdFiles.lst
+-rw-r--r--. 1 ugrad 1315 Dec 11 22:35 inputFiles.lst
+/home/ugrads/weis/Project5/cs1302-arcade:/home/work/cs1302a

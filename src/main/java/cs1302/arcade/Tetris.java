@@ -1,0 +1,906 @@
+
+package cs1302.arcade;
+
+import javafx.application.Platform;
+import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
+import javafx.geometry.Pos;
+import javafx.scene.paint.Color;
+import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+import java.lang.Thread;
+import cs1302.arcade.tiles.*;
+import java.util.Random;
+
+
+/**
+ * The well-known digital board game Tetris.
+ *
+ * @author Blake Weis and Abdul Muqsit
+ */
+public class Tetris {
+
+    Stage stage;
+    Scene tetris;
+    VBox screen;
+    StackPane stack = new StackPane();
+    GridPane grid = new GridPane();
+    int level = 1;
+    int score = 0;
+    Text scoreText;
+    Text levelText;
+    NextTileStack nextTileStack;
+    Square[][] gameArray = new Square[20][10];
+    GridPane gameGridPane = new GridPane();
+    TileSquare tile1;
+    TileSquare tile2;
+    TileSquare tile3;
+    TileSquare tile4;
+    Double spm = 1.0;
+    Timeline timeline;
+    
+    /**
+     * The sole constructor of a game of Tetris, prepares the board.
+     *
+     * @param stage  the stage to contain the game 
+     */
+    public Tetris(Stage stage) {
+
+	this.stage = stage;
+
+        for (int col=0; col<17; col++) {
+            for (int row=0; row<20; row++) {
+                ImageView iv = new ImageView("TetrisBlocks/BlackBlock.png");
+                iv.setFitHeight(30);
+                iv.setFitWidth(30);
+		if (col>9) {
+		    iv.setImage(new Image("TetrisBlocks/GreyBlock.png"));
+		    if (col>=11 && col<=15 && row>=3 && row<=4) {
+			iv.setImage(new Image("TetrisBlocks/BlackBlock.png"));
+		    }
+		    if (col>=11 && col<=15 && row>=7 && row<=8) {
+			iv.setImage(new Image("TetrisBlocks/BlackBlock.png"));
+		    }
+		    if (col>=11 && col<=15 && row>=11 && row<=15) {
+			iv.setImage(new Image("TetrisBlocks/BlackBlock.png"));
+		    }
+		} 
+                grid.add(iv, col, row, 1, 1);
+            }
+        } // for loop generating tetris background                                       
+	stack.getChildren().add(grid);
+	
+	// Font digitalFont = Font.loadFont(getClass().getResourceAsStream("DigitalText"), 30);
+
+	levelText = new Text("LEVEL: " + level);
+	levelText.setFont(new Font("DigitalText.ttf", 28));
+	levelText.setFill(Color.WHITE);
+	scoreText = new Text("" + score);
+	scoreText.setFont(new Font("DigitalText.ttf", 28));
+	scoreText.setFill(Color.WHITE);
+
+	Random r = new Random();
+	int type = r.nextInt(7);
+	nextTileStack = new NextTileStack(type);
+	
+	// Initialize the array
+	for (int row=0; row<20; row++) {
+	    for (int col=0; col<10; col++) {
+		gameArray[row][col] = new Square();
+	    }
+	}
+
+	// Initialize the gameGridPane
+	for (int row=0; row<20; row++) {
+	    for (int col=0; col<10; col++) {
+		gameGridPane.add(gameArray[row][col].getIv(), col, row, 1, 1);
+	    }
+	}
+
+	Pane group = new Pane();
+	group.getChildren().addAll(levelText, scoreText, nextTileStack, gameGridPane);
+	levelText.relocate(340, 105);
+	scoreText.relocate(340, 225);
+	nextTileStack.relocate(330,330);
+	gameGridPane.relocate(0,0);
+	stack.getChildren().add(group);
+
+	Menu file = new Menu("File");
+	MenuItem exit = new MenuItem("Exit");
+	exit.setOnAction(e -> {
+		Platform.exit();
+		System.exit(0);
+	    });
+	file.getItems().add(exit);
+	MenuItem back = new MenuItem("Back");
+	back.setOnAction(e -> {
+		stage.setScene(Home.main);
+	    });
+	file.getItems().add(back);
+
+	Menu options = new Menu("Options");
+
+	Menu help = new Menu("Help");
+	MenuItem controls = new MenuItem("Controls");
+	controls.setOnAction(e -> {
+		showControls();
+	    });
+	help.getItems().add(controls);
+
+	MenuBar menuBar = new MenuBar(file, options, help);
+
+	screen = new VBox(menuBar, stack);
+
+
+        tetris = new Scene(screen);
+        stage.setScene(tetris);
+        stage.setTitle("Arcade: Tetris");
+
+
+	// Add listener to the scene
+	tetris.setOnKeyPressed(new EventHandler<KeyEvent>() {
+	    @Override
+	    public void handle(KeyEvent event) {
+	        switch (event.getCode()) {
+	            case LEFT:
+			moveTilesLeft(); 
+			break;
+		    case RIGHT:
+			moveTilesRight();
+			break;
+		    case UP:
+			rotateTiles();
+			break;
+		    case DOWN:
+            		moveTilesDown();
+			break;
+	        }
+	    }
+	});
+	
+
+
+
+	play();
+    }
+
+
+    /**
+     * Begins the game of Tetris by moving tiles to the bottom of the screen
+     */
+    private void play() {
+	Random r = new Random();
+	int type = r.nextInt(7);
+	createTile(type);
+	cycle();
+	//moveTilesLeft();
+	//moveTilesLeft();
+	//moveTilesLeft();
+	//moveTilesLeft();
+    }
+
+    
+    /**
+     * Randomly chooses the next tile that will be placed on the board
+     */
+    private void randomizeNext() {
+	Random r = new Random();
+	int type = r.nextInt(7);
+	nextTileStack.setTile(type);
+    }
+
+
+    /**
+     * Creates the correct tile and places it at the top of the board
+     *
+     * @param num    the numeric value corresponding tothe tile to be created
+     */
+    private void createTile(int num) {
+	switch (num) {
+	case 0:
+	    tile1 = new TileSquare("Red", gameArray, 0, 3);
+	    tile2 = new TileSquare("Red", gameArray, 0, 4);
+	    tile3 = new TileSquare("Red", gameArray, 1, 4);
+	    tile4 = new TileSquare("Red", gameArray, 1, 5);
+	    break;
+	case 1:
+	    tile1 = new TileSquare("Blue", gameArray, 0, 3);
+	    tile2 = new TileSquare("Blue", gameArray, 0, 4);
+	    tile3 = new TileSquare("Blue", gameArray, 0, 5);
+	    tile4 = new TileSquare("Blue", gameArray, 0, 6);
+	    break;
+	case 2:
+	    tile1 = new TileSquare("Royal", gameArray, 0, 3);
+	    tile2 = new TileSquare("Royal", gameArray, 1, 3);
+	    tile3 = new TileSquare("Royal", gameArray, 1, 4);
+	    tile4 = new TileSquare("Royal", gameArray, 1, 5);
+	    break;
+	case 3:
+	    tile1 = new TileSquare("Yellow", gameArray, 0, 4);
+	    tile2 = new TileSquare("Yellow", gameArray, 0, 5);
+	    tile3 = new TileSquare("Yellow", gameArray, 1, 4);
+	    tile4 = new TileSquare("Yellow", gameArray, 1, 5);
+	    break;
+	case 4:
+	    tile1 = new TileSquare("Green", gameArray, 0, 4);
+	    tile2 = new TileSquare("Green", gameArray, 0, 5);
+	    tile3 = new TileSquare("Green", gameArray, 1, 3);
+	    tile4 = new TileSquare("Green", gameArray, 1, 4);
+	    break;
+	case 5:
+	    tile1 = new TileSquare("Orange", gameArray, 0, 5);
+	    tile2 = new TileSquare("Orange", gameArray, 1, 3);
+	    tile3 = new TileSquare("Orange", gameArray, 1, 4);
+	    tile4 = new TileSquare("Orange", gameArray, 1, 5);
+	    break;
+	case 6:
+	    tile1 = new TileSquare("Pink", gameArray, 0, 4);
+	    tile2 = new TileSquare("Pink", gameArray, 1, 3);
+	    tile3 = new TileSquare("Pink", gameArray, 1, 4);
+	    tile4 = new TileSquare("Pink", gameArray, 1, 5);
+	    break;
+	}
+	gameArray[tile1.row][tile1.col].setIv(tile1.getImage());
+	gameArray[tile1.row][tile1.col].setFull();
+	gameArray[tile2.row][tile2.col].setIv(tile2.getImage());
+	gameArray[tile2.row][tile2.col].setFull();
+	gameArray[tile3.row][tile3.col].setIv(tile3.getImage());  
+	gameArray[tile3.row][tile3.col].setFull();
+	gameArray[tile4.row][tile4.col].setIv(tile4.getImage());  
+	gameArray[tile4.row][tile4.col].setFull();
+    }
+
+
+    /**
+     * Moves the current tile downward if possible. If it cannot move anymore, it increments score,
+     * clears rows, checks if the game is over, and creates a new tile
+     */
+    public void moveTilesDown() {
+	boolean tile1isBottom;
+	boolean tile2isBottom;
+	boolean tile3isBottom;
+	boolean tile4isBottom;
+	// Check if tile 1 is at bottom
+	if ( (tile1.row+1 == tile2.row) && (tile1.col == tile2.col) ) {
+	    tile1isBottom = false;
+	} else if ( (tile1.row+1 == tile3.row) && (tile1.col == tile3.col) ) {
+	    tile1isBottom = false;
+	} else if ( (tile1.row+1 == tile4.row) && (tile1.col == tile4.col) ) {
+	    tile1isBottom = false;
+	} else {
+	    tile1isBottom = true;
+	}
+	//	System.out.println("tile 1 is at bottom: " + tile1isBottom);
+	// Check if tile 2 is at bottom
+	if ( (tile2.row+1 == tile1.row) && (tile2.col == tile1.col) ) {
+	    tile2isBottom = false;
+	} else if ( (tile2.row+1 == tile3.row) && (tile2.col == tile3.col) ) {
+	    tile2isBottom = false;
+	} else if ( (tile2.row+1 == tile4.row) && (tile2.col == tile4.col) ) {
+	    tile2isBottom = false;
+	} else {
+	    tile2isBottom = true;
+	}
+	//	System.out.println("tile 2 is at bottom: " + tile2isBottom);
+	// Check if tile 3 is at bottom
+	if ( (tile3.row+1 == tile1.row) && (tile3.col == tile1.col) ) {
+	    tile3isBottom = false;
+	} else if ( (tile3.row+1 == tile2.row) && (tile3.col == tile2.col) ) {
+	    tile3isBottom = false;
+	} else if ( (tile3.row+1 == tile4.row) && (tile3.col == tile4.col) ) {
+	    tile3isBottom = false;
+	} else {
+	    tile3isBottom = true;
+	}
+	//	System.out.println("tile 3 is at bottom: " + tile3isBottom);
+	// Check if tile 4 is at bottom
+	if ( (tile4.row+1 == tile1.row) && (tile4.col == tile1.col) ) {
+	    tile4isBottom = false;
+	} else if ( (tile4.row+1 == tile2.row) && (tile4.col == tile2.col) ) {
+	    tile4isBottom = false;
+	} else if ( (tile4.row+1 == tile3.row) && (tile4.col == tile3.col) ) {
+	    tile4isBottom = false;
+	} else {
+	    tile4isBottom = true;
+	}
+	//	System.out.println("tile 4 is at bottom: " + tile4isBottom);
+	
+	if (tile1isBottom && tile1.canMoveDown() == false) {
+	    int type = nextTileStack.getCurrentType();
+	    clearFullRows();
+	    if (checkIfGameOver() == false) {
+		incrementScore(10);
+		createTile(type);
+		randomizeNext();
+	    }
+	    return;
+	} else if (tile2isBottom && tile2.canMoveDown() == false) {
+	    int type = nextTileStack.getCurrentType();
+	    clearFullRows();
+	    if (checkIfGameOver() == false) {
+		incrementScore(10);
+		createTile(type);
+		randomizeNext();
+	    }
+	    return; 
+	} else if (tile3isBottom && tile3.canMoveDown() == false) {
+	    int type = nextTileStack.getCurrentType();
+	    clearFullRows();
+	    if (checkIfGameOver() == false) {
+		incrementScore(10);
+		createTile(type);
+		randomizeNext();
+	    }
+	    return;
+	} else if (tile4isBottom && tile4.canMoveDown() == false) {
+	    int type = nextTileStack.getCurrentType();
+	    clearFullRows();
+	    if (checkIfGameOver() == false) {
+		incrementScore(10);
+		createTile(type);
+		randomizeNext();
+	    }
+	    return;
+	} else {
+	    // reset all previous squares
+	    gameArray[tile1.row][tile1.col].resetSquare();
+	    gameArray[tile2.row][tile2.col].resetSquare();
+	    gameArray[tile3.row][tile3.col].resetSquare();
+	    gameArray[tile4.row][tile4.col].resetSquare();
+	    tile1.row++;
+	    tile2.row++;
+	    tile3.row++;
+	    tile4.row++;
+	    gameArray[tile1.row][tile1.col].setIv(tile1.getImage());
+	    gameArray[tile1.row][tile1.col].setFull();
+	    gameArray[tile2.row][tile2.col].setIv(tile2.getImage());
+	    gameArray[tile2.row][tile2.col].setFull();
+	    gameArray[tile3.row][tile3.col].setIv(tile3.getImage());
+	    gameArray[tile3.row][tile3.col].setFull();
+	    gameArray[tile4.row][tile4.col].setIv(tile4.getImage());
+	    gameArray[tile4.row][tile4.col].setFull();
+	}
+    }
+
+
+    /**
+     * Moves the current tile to the left if possible. If not possible, this method returns without moving anything
+     */
+    public void moveTilesLeft() {
+	boolean tile1isLeft;
+	boolean tile2isLeft;
+	boolean tile3isLeft;
+	boolean tile4isLeft;
+	// Check if tile 1 is at left
+	if ( (tile1.row == tile2.row) && (tile1.col-1 == tile2.col) ) {
+	    tile1isLeft = false;
+	} else if ( (tile1.row == tile3.row) && (tile1.col-1 == tile3.col) ) {
+	    tile1isLeft = false;
+	} else if ( (tile1.row == tile4.row) && (tile1.col-1 == tile4.col) ) {
+	    tile1isLeft = false;
+	} else {
+	    tile1isLeft = true;
+	}
+	//System.out.println("tile 1 is at left: " + tile1isLeft);
+	// Check if tile 2 is at left
+	if ( (tile2.row == tile1.row) && (tile2.col-1 == tile1.col) ) {
+	    tile2isLeft = false;
+	} else if ( (tile2.row == tile3.row) && (tile2.col-1 == tile3.col) ) {
+	    tile2isLeft = false;
+	} else if ( (tile2.row == tile4.row) && (tile2.col-1 == tile4.col) ) {
+	    tile2isLeft = false;
+	} else { 
+	    tile2isLeft = true;
+	}
+	//System.out.println("tile 2 is at left: " + tile2isLeft);
+	// Check if tile3 is at left
+	if ( (tile3.row == tile1.row) && (tile3.col-1 == tile1.col) ) {
+	    tile3isLeft = false;
+	} else if ( (tile3.row == tile2.row) && (tile3.col-1 == tile2.col) ) {
+            tile3isLeft= false;
+	} else if ( (tile3.row == tile4.row) && (tile3.col-1 == tile4.col) ) {
+            tile3isLeft= false;
+	} else {
+	    tile3isLeft = true;
+	}
+	//System.out.println("tile 3 is at left: " + tile3isLeft);
+	// Check if tile 4 is at left
+	if ( (tile4.row == tile1.row) && (tile4.col-1 == tile1.col) ) {
+	    tile4isLeft = false;
+	} else if ( (tile4.row == tile2.row) && (tile4.col-1 == tile2.col) ) {
+            tile4isLeft= false;
+	} else if ( (tile4.row == tile3.row) && (tile4.col-1 == tile3.col) ) {
+            tile4isLeft= false;
+	} else {
+	    tile4isLeft = true;
+	}
+	//System.out.println("tile 4 is at left: " + tile4isLeft);
+
+	if (tile1isLeft && tile1.canMoveLeft() == false) {
+	    return;
+	} else if (tile2isLeft && tile2.canMoveLeft() == false) {
+	    return;
+	} else if (tile3isLeft && tile3.canMoveLeft() == false) {
+	    return;
+	} else if (tile4isLeft && tile4.canMoveLeft() == false) {
+	    return;
+	} else {
+	    // reset all previous squares
+	    gameArray[tile1.row][tile1.col].resetSquare();
+	    gameArray[tile2.row][tile2.col].resetSquare();
+	    gameArray[tile3.row][tile3.col].resetSquare();
+	    gameArray[tile4.row][tile4.col].resetSquare();
+	    tile1.col -= 1;
+	    tile2.col -= 1;
+	    tile3.col -= 1;
+	    tile4.col -= 1;
+	    gameArray[tile1.row][tile1.col].setIv(tile1.getImage());
+	    gameArray[tile1.row][tile1.col].setFull();
+	    gameArray[tile2.row][tile2.col].setIv(tile2.getImage());
+	    gameArray[tile2.row][tile2.col].setFull();
+	    gameArray[tile3.row][tile3.col].setIv(tile3.getImage());
+	    gameArray[tile3.row][tile3.col].setFull();
+	    gameArray[tile4.row][tile4.col].setIv(tile4.getImage());
+	    gameArray[tile4.row][tile4.col].setFull();
+	}
+    }
+
+    
+    /**
+     * Moves the tile to the right if possible, if not possible this method returns without doing anything
+     */
+    public void moveTilesRight() {
+	boolean tile1isRight;
+	boolean tile2isRight;
+	boolean tile3isRight;
+	boolean tile4isRight;
+	// Check is tile 1 is at right
+	if ( (tile1.row == tile2.row) && (tile1.col+1 == tile2.col) ) {
+	    tile1isRight = false;
+	} else if ( (tile1.row == tile3.row) && (tile1.col+1 == tile3.col) ) {
+	    tile1isRight = false;
+	} else if ( (tile1.row == tile4.row) && (tile1.col+1 == tile4.col) ) {
+	    tile1isRight = false;
+	} else {
+	    tile1isRight = true;
+	}
+	// Check is tile 2 is at right
+	if ( (tile2.row == tile1.row) && (tile2.col+1 == tile1.col) ) {
+	    tile2isRight = false;
+	} else if ( (tile2.row == tile3.row) && (tile2.col+1 == tile3.col) ) {
+	    tile2isRight = false;
+	} else if ( (tile2.row == tile4.row) && (tile2.col+1 == tile4.col) ) {
+	    tile2isRight = false;
+	} else {
+	    tile2isRight = true;
+	}
+	// Check if tile 3 is at right
+	if ( (tile3.row == tile1.row) && (tile3.col+1 == tile1.col) ) {
+	    tile3isRight = false;
+	} else if ( (tile3.row == tile2.row) && (tile3.col+1 == tile2.col) ) {
+	    tile3isRight = false;
+	} else if ( (tile3.row == tile4.row) && (tile3.col+1 == tile4.col) ) {
+	    tile3isRight = false;
+	} else { 
+	    tile3isRight = true;
+	}
+	// Check if tile 4 is at right
+	if ( (tile4.row == tile1.row) && (tile4.col+1 == tile1.col) ) {
+	    tile4isRight = false;
+	} else if ( (tile4.row == tile2.row) && (tile4.col+1 == tile2.col) ) {
+	    tile4isRight = false;
+	} else if ( (tile4.row == tile3.row) && (tile4.col+1 == tile3.col) ) {
+	    tile4isRight = false;
+	} else {
+	    tile4isRight = true;
+	}
+
+	if (tile1isRight && tile1.canMoveRight() == false) {
+	    return;
+	} else if (tile2isRight && tile2.canMoveRight() == false) {
+	    return;
+	} else if (tile3isRight && tile3.canMoveRight() == false) {
+	    return;
+	} else if (tile4isRight && tile4.canMoveRight() == false) {
+	    return;
+	} else {
+	    // reset all previous squares
+	    gameArray[tile1.row][tile1.col].resetSquare();
+	    gameArray[tile2.row][tile2.col].resetSquare();
+	    gameArray[tile3.row][tile3.col].resetSquare();
+	    gameArray[tile4.row][tile4.col].resetSquare();
+	    tile1.col += 1;
+	    tile2.col += 1;
+	    tile3.col += 1;
+	    tile4.col += 1;
+	    gameArray[tile1.row][tile1.col].setIv(tile1.getImage());
+	    gameArray[tile1.row][tile1.col].setFull();
+	    gameArray[tile2.row][tile2.col].setIv(tile2.getImage());
+	    gameArray[tile2.row][tile2.col].setFull();
+	    gameArray[tile3.row][tile3.col].setIv(tile3.getImage());
+	    gameArray[tile3.row][tile3.col].setFull();
+	    gameArray[tile4.row][tile4.col].setIv(tile4.getImage());
+	    gameArray[tile4.row][tile4.col].setFull();
+	}
+    }
+
+    
+    /** Rotates the current tile clockwise 90 degrees if possible.
+     * If not possible, this method returns without moving anything.
+     */
+    public void rotateTiles() {
+	int[] tile1rotatePos = getRotationPosition(tile3.row, tile3.col, tile1.row, tile1.col);
+	int[] tile2rotatePos = getRotationPosition(tile3.row, tile3.col, tile2.row, tile2.col);
+	int[] tile3rotatePos = getRotationPosition(tile3.row, tile3.col, tile3.row, tile3.col);
+	int[] tile4rotatePos = getRotationPosition(tile3.row, tile3.col, tile4.row, tile4.col);
+
+	//System.out.println("tile 1 is at " + tile1.row + tile1.col + " and rotates to " + tile1rotatePos[0] + tile1rotatePos[1]);
+
+	// Check availability of tile 1
+	if (tile1rotatePos[0]>19 || tile1rotatePos[0]<0) {
+	    //System.out.println("Stopped 1 1");
+	    return;
+	} else if (tile1rotatePos[1]>9 || tile1rotatePos[1]<0) {
+	    //System.out.println("Stopped 1 2");
+	    return;
+	} else if (gameArray[tile1rotatePos[0]][tile1rotatePos[1]].isFull()) {
+	    if (tile1rotatePos[0] == tile2.row && tile1rotatePos[1] == tile2.col) { // okay continue
+	    } else if (tile1rotatePos[0] == tile3.row && tile1rotatePos[1] == tile3.col) { // okay continue
+	    } else if (tile1rotatePos[0] == tile4.row && tile1rotatePos[1] == tile4.col) { // okay continue
+	    } else {
+		//System.out.println("Stopped 1 3");
+		return;
+	    }
+	}
+
+	if (tile2rotatePos[0]>19 || tile2rotatePos[0]<0) {
+	    //System.out.println("Stopped 2 1");
+	    return;
+	} else if (tile2rotatePos[1]>9 || tile2rotatePos[1]<0) {
+	    //System.out.println("Stopped 2 2");
+	    return;
+	} else if (gameArray[tile2rotatePos[0]][tile2rotatePos[1]].isFull()) {
+	    if (tile2rotatePos[0] == tile1.row && tile2rotatePos[1] == tile1.col) { // okay continue
+	    } else if (tile2rotatePos[0] == tile3.row && tile2rotatePos[1] == tile3.col) { // okay continue
+	    } else if (tile2rotatePos[0] == tile4.row && tile2rotatePos[1] == tile4.col) { // okay continue
+	    } else {
+		//System.out.println("Stopped 2 3");
+		return;
+	    }
+	}
+
+	if (tile3rotatePos[0]>19 || tile3rotatePos[0]<0) {
+	    //System.out.println("Stopped 3 1");
+	    return;
+	} else if (tile3rotatePos[1]>9 || tile3rotatePos[1]<0) {
+	    //System.out.println("Stopped 3 2");
+	    return;
+	} else if (gameArray[tile3rotatePos[0]][tile3rotatePos[1]].isFull()) {
+	    if (tile3rotatePos[0] == tile1.row && tile3rotatePos[1] == tile1.col) { // okay continue
+	    } else if (tile3rotatePos[0] == tile2.row && tile3rotatePos[1] == tile2.col) { // okay continue
+	    } else if (tile3rotatePos[0] == tile3.row && tile3rotatePos[1] == tile3.col) { // okay continue
+	    } else if (tile3rotatePos[0] == tile4.row && tile3rotatePos[1] == tile4.col) { // okay continue
+	    } else {
+		//System.out.println("Stopped 3 3");
+		return;
+	    }
+	}
+
+	if (tile4rotatePos[0]>19 || tile4rotatePos[0]<0) {
+	    //System.out.println("Stopped 4 1");
+	    return;
+	} else if (tile4rotatePos[1]>9 || tile4rotatePos[1]<0) {
+	    //System.out.println("Stopped 4 2");
+	    return;
+	} else if (gameArray[tile4rotatePos[0]][tile4rotatePos[1]].isFull()) {
+	    if (tile4rotatePos[0] == tile1.row && tile4rotatePos[1] == tile1.col) {
+	    } else if (tile4rotatePos[0] == tile2.row && tile4rotatePos[1] == tile2.col) {
+	    } else if (tile4rotatePos[0] == tile3.row && tile4rotatePos[1] == tile3.col) {
+	    } else {
+		//System.out.println("Stopped 4 3");
+		return;
+	    }
+	}
+
+	//System.out.println("yay successful rotate!!!!!!!!!");
+	// make rotation
+	gameArray[tile1.row][tile1.col].resetSquare();
+	gameArray[tile2.row][tile2.col].resetSquare();
+	gameArray[tile3.row][tile3.col].resetSquare();
+	gameArray[tile4.row][tile4.col].resetSquare();
+	tile1.row = tile1rotatePos[0];
+	tile1.col = tile1rotatePos[1];
+	tile2.row = tile2rotatePos[0];
+	tile2.col = tile2rotatePos[1];
+	tile3.row = tile3rotatePos[0];
+	tile3.col = tile3rotatePos[1];
+	tile4.row = tile4rotatePos[0];
+	tile4.col = tile4rotatePos[1];
+	gameArray[tile1.row][tile1.col].setIv(tile1.getImage());
+	gameArray[tile1.row][tile1.col].setFull();
+	gameArray[tile2.row][tile2.col].setIv(tile2.getImage());
+	gameArray[tile2.row][tile2.col].setFull();
+	gameArray[tile3.row][tile3.col].setIv(tile3.getImage());
+	gameArray[tile3.row][tile3.col].setFull();
+	gameArray[tile4.row][tile4.col].setIv(tile4.getImage());
+	gameArray[tile4.row][tile4.col].setFull();
+    }
+
+
+    /**
+     * Each tile, is split into four tile squares. This helper method finds the new position of each 
+     * tile square after a rotation. This method uses the transformation algorithm of vectors from linear algebra.
+     *
+     * @param pivotsRow    the row of the pivot point
+     * @param pivotsCol    the column of the pivot point
+     * @param row          the row of the tile square to be rotated
+     * @param col          the column of the tile square to be rotated
+     */
+    public int[] getRotationPosition(int pivotsRow, int pivotsCol, int row, int col) {
+	
+	int[] relativeVector = new int[2];
+	relativeVector[0] = row - pivotsRow;
+	relativeVector[1] = col - pivotsCol;
+	
+	int[] transformVector = new int[2];
+	transformVector[0] = (0*relativeVector[0]) + (1*relativeVector[1]);
+	transformVector[1] = (-1*relativeVector[0]) + (0*relativeVector[1]);
+
+	int[] finalPosition = new int[2];
+	finalPosition[0] = pivotsRow + transformVector[0];
+	finalPosition[1] = pivotsCol + transformVector[1];
+
+	return finalPosition;
+    }
+
+
+    /**
+     * Provides the movement of the game by constantly moving the current tile down
+     */
+    public void cycle() {
+	EventHandler<ActionEvent> handler = event -> moveTilesDown();
+	KeyFrame keyFrame = new KeyFrame(Duration.seconds(spm), handler);
+	
+	timeline = new Timeline();
+	timeline.setCycleCount(Timeline.INDEFINITE);
+	timeline.getKeyFrames().add(keyFrame);
+	timeline.play();
+    }
+
+    private void speedUpTimeline(double seconds) {
+	if (timeline != null) {
+	    timeline.stop();
+	}
+	timeline = new Timeline(new KeyFrame(Duration.seconds(seconds), new EventHandler<ActionEvent>() {
+		    @Override
+		    public void handle(ActionEvent event) {
+			moveTilesDown();
+		    }
+		}));
+	timeline.setCycleCount(Timeline.INDEFINITE);
+	timeline.play();
+    }
+
+    /**
+     * Checks to see if a row is full
+     *
+     * @param row    the row to check
+     * @return whether or not the row is full
+     */
+    private boolean checkIfRowFull(int row) {
+	for (int col=0; col<10; col++) {
+	    if (gameArray[row][col].isFull() == false) {
+		return false;
+	    }
+	}
+	return true;
+    }
+
+
+    /**
+     * Resets every square on playing board at the specific row
+     *
+     * @param row    the row to be cleared
+     */
+    private void clearRow(int row) {
+	for (int col=0; col<10;col++) {
+	    gameArray[row][col].resetSquare();
+	}
+    }
+
+
+    /**
+     * Checks for any rows that are full and clears them. Keeps track of how many rows were 
+     * deleted in each call and increments score accordingly
+     */
+    private void clearFullRows() {
+	int rowsCleared = 0;
+	for (int row=19; row>=0; row--) {
+	    if (checkIfRowFull(row)) {
+		// clear that row
+		clearRow(row);
+		rowsCleared++;
+		for (int rowUp=row; rowUp>0; rowUp--) {
+		    for (int col=0; col<10; col++) {
+			Image i = gameArray[rowUp-1][col].getImage();
+			gameArray[rowUp][col].setIv(i);
+			if (gameArray[rowUp-1][col].isFull()) {
+			    gameArray[rowUp][col].setFull();
+			} else {
+			    gameArray[rowUp][col].setEmpty();
+			}
+		    }
+		}
+		row++;
+	    }
+	}
+	switch (rowsCleared) {
+	case 0: 
+	    //System.out.println("Called 0");
+	    break;
+	case 1:
+	    //System.out.println("Called 1");
+	    incrementScore(100);
+	    break;
+	case 2: 
+	    incrementScore(200);
+	    break;
+	case 3:
+	    incrementScore(400);
+	    break;
+	case 4:
+	    incrementScore(800);
+	default:
+	    break;
+	}
+    }
+
+
+    /**
+     * Adds points to the player's score
+     *
+     * @param pointsToAdd    number of points to add to the score
+     */
+    public void incrementScore(int pointsToAdd) {
+	score = score + pointsToAdd;
+	//System.out.println(score);
+	scoreText.setText("" + score);
+	incrementLevel();
+    }
+
+
+    /**
+     * Checks the player's score, increments the level and set the game speed accordingly
+     */
+    public void incrementLevel() {
+	if (score >= 0 && score < 500) level = 1;
+	if (score >= 500 && score < 1000) level = 2;
+	if (score >= 1000 && score < 1500) level = 3;
+	if (score >= 1500 && score < 2500) level = 4;
+	if (score >= 2500 && score < 5000) level = 5;
+	if (score >= 5000 && score < 7000) level = 6;
+	if (score >= 7000 && score < 10000) level = 7;
+	if (score >= 10000) level = 8;
+	
+	levelText.setText("LEVEL: " + level);
+
+	switch (level) {
+	case 1:
+	    spm = 1.0;
+	    speedUpTimeline(spm);
+	    break;
+	case 2:
+	    spm = 0.7;
+	    speedUpTimeline(spm);
+	    break;
+	case 3:
+	    spm = 0.5;
+	    speedUpTimeline(spm);
+	    break;
+	case 4:
+	    spm = 0.4;
+	    speedUpTimeline(spm);
+	    break;
+	case 5:
+	    spm = 0.3;
+	    speedUpTimeline(spm);
+	    break;
+	case 6:
+	    spm = 0.2;
+	    speedUpTimeline(spm);
+	    break;
+	case 7:
+	    spm = 0.15;
+	    speedUpTimeline(spm);
+	    break;
+	case 8:
+	    spm = 0.1;
+	    speedUpTimeline(spm);
+	    break;
+	} 
+	    
+    }
+
+    /** 
+     * Checks to see if the top row contains a tile square after each tile comes to rest.
+     *
+     * @return whether or not the game is over
+     */
+    private boolean checkIfGameOver() {
+	for (int col=0; col<10; col++) {
+	    if (gameArray[0][col].isFull()) {
+		gameOver();
+		return true;
+	    }
+	}
+	return false;
+    }
+
+
+    /**
+     * Stops the playing of the game, shows the player a game over window and their final score.
+     * Resets the screen to the arcade's home screen
+     */
+    private void gameOver() {
+	timeline.pause();
+	final Stage gameover = new Stage();
+	gameover.initModality(Modality.APPLICATION_MODAL);
+	gameover.initOwner(stage);
+	StackPane gStack = new StackPane();
+	ImageView gPic = new ImageView("GAMEOVER.png");
+	gPic.setFitHeight(240);
+	gPic.setFitWidth(300);
+	gStack.getChildren().add(gPic);
+	Pane gPane = new Pane();
+	Text gScore = new Text("Score: " + score);
+	gScore.setFont(new Font("DigitalText.ttf", 30));
+	gScore.setFill(Color.WHITE);
+	gPane.getChildren().add(gScore);
+	gScore.relocate(60, 160);
+	gStack.getChildren().add(gPane);
+	Scene gScene = new Scene(gStack);
+	gameover.setScene(gScene);
+	gameover.sizeToScene();
+	gameover.show();
+	stage.setScene(Home.main);
+    }
+
+    
+
+    /**
+     * Displays the controls for Tetris
+     */
+    private void showControls() {
+	final Stage cStage = new Stage();
+	cStage.initModality(Modality.APPLICATION_MODAL);
+	cStage.initOwner(stage);
+	ImageView cPic = new ImageView("HELP.png");
+	cPic.setFitWidth(400);
+	cPic.setFitHeight(150);
+	Pane cPane = new Pane();
+	cPane.getChildren().add(cPic);
+	Scene cScene = new Scene(cPane);
+	cStage.setScene(cScene);
+	cStage.sizeToScene();
+	cStage.show();
+    }
+
+}

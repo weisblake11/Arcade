@@ -1,0 +1,112 @@
+package cs1302.arcade;
+
+import javafx.application.Platform;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
+
+public class Minesweeper {
+    
+    ImageView opened = new ImageView("https://i.imgur.com/sZwXDPn.png");
+    ImageView unopened = new ImageView("https://i.imgur.com/Kl7frKSs.png?2");
+    ImageView flag = new ImageView("https://i.imgur.com/kmsHYKos.png?1");
+    ImageView guess = new ImageView("https://i.imgur.com/uqUP2ud.png");
+    ImageView one = new ImageView("https://i.imgur.com/xtAP4Qps.png?1");
+    ImageView two = new ImageView("https://i.imgur.com/kx2ulaRs.png?1");
+    ImageView three = new ImageView("https://i.imgur.com/70FfKBbs.png?1");
+    ImageView four = new ImageView("https://i.imgur.com/21iL9UE.png?1");
+    ImageView five = new ImageView("https://i.imgur.com/S5ycoFs.png?1");
+    ImageView six = new ImageView("https://i.imgur.com/nDefSmx.png?1");
+    ImageView seven = new ImageView("https://i.imgur.com/jDeSZEE.png?1");
+    ImageView eight = new ImageView("https://i.imgur.com/x8mVkums.png?1");
+
+    GridPane grid = new GridPane();
+    int[][] board;
+    StackPane stack = new StackPane();
+
+    public Minesweeper(Stage stage) {
+	sizeImages();
+	ImageView background = new ImageView("https://i.imgur.com/vmVkrcA.png");
+	stack.getChildren().add(background);
+
+	for(int i = 0; i< 30; i++) {
+	    for(int j = 0; j < 17; j++) {
+		grid.add(three, i, j);
+	    } // for
+	} // for
+	grid.relocate(2, 20);
+	stack.getChildren().add(grid);
+	
+        Menu file = new Menu("File");
+        MenuItem exit = new MenuItem("Exit");
+        exit.setOnAction(e -> {
+                Platform.exit();
+                System.exit(0);
+            });
+        file.getItems().add(exit);
+        MenuItem back = new MenuItem("Back");
+        back.setOnAction(e -> {
+                stage.setScene(Home.main);
+            });
+        file.getItems().add(back);
+
+        Menu options = new Menu("Options");
+	Menu help = new Menu("Help");
+
+        MenuBar menuBar = new MenuBar(file, options, help);
+
+        VBox screen = new VBox(menuBar, stack);
+	
+	Scene minesweeper = new Scene(screen);
+	stage.setScene(minesweeper);
+	stage.setTitle("Arcade: Minesweeper");
+	
+    } // Constructor
+
+    public void sizeImages() {
+	opened.setFitWidth(5);
+	opened.setFitHeight(5);
+
+	unopened.setFitWidth(5);
+	unopened.setFitHeight(5);
+
+	guess.setFitWidth(5);
+	guess.setFitHeight(5);
+
+	one.setFitWidth(5);
+	one.setFitHeight(5);
+
+	two.setFitWidth(5);
+	two.setFitHeight(5);
+
+	three.setFitWidth(5);
+	three.setFitHeight(5);
+
+	four.setFitWidth(5);
+	four.setFitHeight(5);
+	
+	five.setFitWidth(5);
+	five.setFitHeight(5);
+	
+	six.setFitWidth(5);
+	six.setFitHeight(5);
+	
+	seven.setFitWidth(5);
+	seven.setFitHeight(5);
+	
+	eight.setFitWidth(5);
+	eight.setFitHeight(5);
+    }
+} // Minesweeper
